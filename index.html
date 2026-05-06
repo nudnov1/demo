@@ -3,155 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шоппинг Калькулятор Израиль</title>
+    <title>Israel Shopping Calc</title>
     <style>
         :root {
-            --primary-color: #007AFF;
-            --secondary-color: #5856D6;
-            --bg-color: #f0f2f5;
-            --card-bg: #ffffff;
+            --discount-color: #ff3b30;
+            --tax-color: #34c759;
+            --total-color: #007aff;
+            --bg: #f2f2f7;
         }
 
         body {
-            font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, sans-serif;
+            background-color: var(--bg);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-        }
+        .container { width: 100%; max-width: 400px; }
 
         .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            color: #333;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 10px;
-        }
-
-        .input-group {
+            background: white;
+            padding: 18px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 15px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #666;
-        }
+        h2 { margin: 0 0 15px 0; font-size: 1.1rem; color: #1c1c1e; }
 
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; }
+
+        label { display: block; font-size: 0.8rem; color: #8e8e93; margin-bottom: 4px; }
+        
         input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            border: 1px solid #d1d1d6;
+            border-radius: 8px;
+            font-size: 1rem;
             box-sizing: border-box;
-            outline: none;
+            -moz-appearance: textfield;
         }
 
-        input:focus {
-            border-color: var(--primary-color);
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none; margin: 0;
         }
 
-        .result-box {
-            background: #f8f9ff;
-            padding: 15px;
-            border-radius: 12px;
+        .result {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
             text-align: center;
-        }
-
-        .res-val {
-            font-size: 1.5rem;
             font-weight: bold;
-            color: var(--primary-color);
+            font-size: 1.2rem;
         }
 
-        .tax-res { color: var(--secondary-color); }
+        .res-discount { background: #fff2f2; color: var(--discount-color); }
+        .res-tax { background: #f2fff5; color: var(--tax-color); }
+        .res-total { background: #f2f8ff; color: var(--total-color); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    
-    <!-- Калькулятор скидок -->
+
+    <!-- 1. Скидка -->
     <div class="card">
         <h2>🏷️ Скидка (Минус %)</h2>
-        <div class="input-group">
-            <label>Цена товара (₪)</label>
-            <input type="number" id="p1" placeholder="100" oninput="calcDiscount()">
+        <div class="row">
+            <div class="col">
+                <label>Цена (₪)</label>
+                <input type="number" id="p1" placeholder="100" oninput="calc1()">
+            </div>
+            <div class="col">
+                <label>Скидка %</label>
+                <input type="number" id="d1" placeholder="65" oninput="calc1()">
+            </div>
         </div>
-        <div class="input-group">
-            <label>Скидка (%)</label>
-            <input type="number" id="d1" placeholder="65" oninput="calcDiscount()">
-        </div>
-        <div class="result-box">
-            <div style="font-size: 0.8rem; color: #888;">Цена со скидкой:</div>
-            <div id="r1" class="res-val">0 ₪</div>
-        </div>
+        <div id="r1" class="result res-discount">Итого: 0 ₪</div>
     </div>
 
-    <!-- Калькулятор налога -->
+    <!-- 2. Только налог -->
     <div class="card">
-        <h2>💰 Налог (МААМ / НДС)</h2>
-        <div class="input-group">
-            <label>Сумма (₪)</label>
-            <input type="number" id="p2" placeholder="100" oninput="calcTax()">
+        <h2>📊 Сколько составит налог?</h2>
+        <div class="row">
+            <div class="col">
+                <label>Сумма (₪)</label>
+                <input type="number" id="p2" placeholder="100" oninput="calc2()">
+            </div>
+            <div class="col">
+                <label>НДС %</label>
+                <input type="number" id="t2" value="18" oninput="calc2()">
+            </div>
         </div>
-        <div class="input-group">
-            <label>Ставка налога (%)</label>
-            <input type="number" id="t2" value="18" oninput="calcTax()">
+        <div id="r2" class="result res-tax">Налог: 0 ₪</div>
+    </div>
+
+    <!-- 3. Плюс налог -->
+    <div class="card">
+        <h2>💰 Цена + НДС (Итого)</h2>
+        <div class="row">
+            <div class="col">
+                <label>Без НДС (₪)</label>
+                <input type="number" id="p3" placeholder="100" oninput="calc3()">
+            </div>
+            <div class="col">
+                <label>НДС %</label>
+                <input type="number" id="t3" value="18" oninput="calc3()">
+            </div>
         </div>
-        <div class="result-box" style="background: #f5f3ff;">
-            <div style="font-size: 0.8rem; color: #888;">Сумма налога:</div>
-            <div id="r2" class="res-val tax-res">0 ₪</div>
-            <div id="r2_total" style="font-size: 0.9rem; color: #444; margin-top: 5px;">Итого с налогом: 0 ₪</div>
-        </div>
+        <div id="r3" class="result res-total">Всего: 0 ₪</div>
     </div>
 
 </div>
 
 <script>
-    function calcDiscount() {
-        const p = parseFloat(document.getElementById('p1').value);
-        const d = parseFloat(document.getElementById('d1').value);
-        const res = document.getElementById('r1');
-        
-        if (p && d) {
-            res.innerText = (p - (p * d / 100)).toFixed(2) + ' ₪';
-        } else {
-            res.innerText = '0 ₪';
-        }
+    function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+    function setRes(id, text) { document.getElementById(id).innerText = text; }
+
+    function calc1() {
+        let p = getVal('p1'), d = getVal('d1');
+        setRes('r1', p ? `Итого: ${(p * (1 - d/100)).toFixed(2)} ₪` : 'Итого: 0 ₪');
     }
 
-    function calcTax() {
-        const p = parseFloat(document.getElementById('p2').value);
-        const t = parseFloat(document.getElementById('t2').value);
-        const res = document.getElementById('r2');
-        const resTotal = document.getElementById('r2_total');
-        
-        if (p && t) {
-            const taxAmount = p * (t / 100);
-            res.innerText = taxAmount.toFixed(2) + ' ₪';
-            resTotal.innerText = 'Итого с налогом: ' + (p + taxAmount).toFixed(2) + ' ₪';
-        } else {
-            res.innerText = '0 ₪';
-            resTotal.innerText = 'Итого с налогом: 0 ₪';
-        }
+    function calc2() {
+        let p = getVal('p2'), t = getVal('t2');
+        setRes('r2', p ? `Налог: ${(p * t/100).toFixed(2)} ₪` : 'Налог: 0 ₪');
+    }
+
+    function calc3() {
+        let p = getVal('p3'), t = getVal('t3');
+        setRes('r3', p ? `Всего: ${(p * (1 + t/100)).toFixed(2)} ₪` : 'Всего: 0 ₪');
     }
 </script>
 
